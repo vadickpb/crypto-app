@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react'
+import CryptoList from '../components/CryptoList'
+import Loading from '../components/Loading'
+import { useFetch } from '../hooks/useFetch'
 
 const HomePage = () => {
 
-    const [coins, setCoins] = useState([])
-
     const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
 
-    useEffect(() => {
-        const getCoins = async() => {
-            const res = await fetch(url)
-            const data = await res.json()
+    const {state} = useFetch(url)
+    
+    const [searchInput, setSearchInput] = useState("")
 
-            setCoins(data)
-            console.log(coins);
-        }
+    const {loading, data} = state
 
-        getCoins()
-    }, [])
+    const handleInputChange = ({target}) => {
+        setSearchInput(target.value)
+    }
+
+    const filterCoins = data.filter(newData => newData.name.toLowerCase().includes(searchInput.toLowerCase()))
 
     return (
         <div className='container'>
@@ -28,20 +29,14 @@ const HomePage = () => {
                     <input
                         className='form-control'
                         placeholder='ingrese la criptomoneda'
+                        name='cryptoname'
+                        // value={cryptoname}
+                        onChange={handleInputChange}
                     />
-                    <table className="table">
-                        <tbody>
-
-                            { coins.map( coin => (
-                                <tr key={coin.id}>
-                                    <td key={coin.id}><img src={coin.image}/></td>
-                                    <td>{coin.name}</td>
-                                    <td>{coin.symbol}</td>
-                                    <td>${coin.current_price}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <hr/>
+                    {
+                        loading ? <Loading /> : <CryptoList filterCoins={filterCoins} />
+                    }
                 </div>
             </div>
         </div>
