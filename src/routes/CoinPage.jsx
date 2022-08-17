@@ -32,7 +32,7 @@ const CoinPage = () => {
 
                     <div className="card">
                         <div className='row no-gutters'>
-                            <div className="col-4">
+                            <div className="col-4 justify-center">
                                 <img
                                     className='card-img img-thumbnail p-3'
                                     src={data.image.large}
